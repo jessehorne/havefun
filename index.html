@@ -1,0 +1,64 @@
+<html>
+  <head>
+    <title>Have Fun</title>
+    <style>
+      html, body { width: 100%; height: 100%; }
+      #content { width: 100%; height: 100%; }
+      #editor { padding: 20px; width: 100%; height: 80%; position: absolute;}
+      #content { width: 100%; height: 100%; }
+      #submit { width: 100%; height: 10%; position: absolute; }
+      #main { width: 100%; height: 100%; position: absolute; }
+    </style>
+  </head>
+  <body>
+    <div id="content"></div>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+    <script id="sandbox"></script>
+
+    <textarea id="editor" name="editor"></textarea>
+    <button id="submit" onclick="SubmitCode();">Submit</button>
+
+    <script>
+    var socket = io();
+
+    socket.on("insert javascript", function(code) {
+      // mainScript.appendChild(document.createTextNode(code));
+      eval(code);
+    });
+
+    var openEditor = function() {
+      document.getElementById("editor").style.display = "block";
+      document.getElementById("editor").style.left = 0;
+      document.getElementById("editor").style.top = 0;
+
+      document.getElementById("submit").style.left = 0;
+      document.getElementById("submit").style.bottom = 0;
+
+      document.getElementById("submit").style.display = "block";
+    };
+
+    var closeEditor = function() {
+      document.getElementById("editor").style.display = "none";
+      document.getElementById("submit").style.display = "none";
+    };
+
+    var SubmitCode = function() {
+      socket.emit("insert javascript", document.getElementById("editor").value);
+      document.getElementById("editor").value = "";
+      closeEditor();
+    };
+
+    document.oncontextmenu = function(e) {
+      e.preventDefault();
+      openEditor();
+    }
+
+    //socket.emit("insert javascript", "var randomButton = document.createElement('input'); randomButton.type = 'button'; randomButton.value = 'hi'; document.getElementById('sandbox').appendChild(randomButton);");
+    </script>
+    <menu type="context" id="hf-menu">
+      <menuitem label="Insert JavaScript" onclick="openEditor();"></menuitem>
+    </menu>
+  </body>
+</html>
